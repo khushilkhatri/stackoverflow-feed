@@ -72,17 +72,17 @@ class App extends React.Component<Props, State> {
               </tr>
             </thead>
             <tbody>
-              {questions.map((question: any, index: number) => {
-                return (
+              {questions.map((question: any, index: number) =>
+                question ? (
                   <Row
-                    creation_date={question.creation_date || ""}
+                    creation_date={question.creation_date}
                     key={index}
-                    link={question.link || ""}
-                    owner={question.owner || {}}
-                    title={question.title || ""}
+                    link={question.link}
+                    owner={question.owner}
+                    title={question.title}
                   ></Row>
-                );
-              })}
+                ) : null
+              )}
             </tbody>
           </Table>
         </InfiniteScroll>
