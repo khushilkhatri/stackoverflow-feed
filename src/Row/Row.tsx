@@ -23,7 +23,7 @@ const Row = (props: Props) => {
     */}
       <td
         dangerouslySetInnerHTML={{
-          __html: props.owner.display_name
+          __html: props.owner.display_name || ""
         }}
       ></td>
       <td dangerouslySetInnerHTML={{ __html: props.title }}></td>

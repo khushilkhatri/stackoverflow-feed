@@ -27,7 +27,7 @@ class App extends React.Component<Props, State> {
     const { page } = this.state;
     const queryObject: any = {
       page,
-      key: "U4DMV*8nvpm3EOpvf69Rxw((",
+      key: "qU8y8L3eTkUTgsPABxDljw((",
       site: "stackoverflow",
       order: "desc",
       sort: "hot",
@@ -48,11 +48,13 @@ class App extends React.Component<Props, State> {
       })
       .catch((err: Error) => {
         window.alert("API fetch error. Stackoverflow API response 400.");
+        console.log(this.state);
       });
   };
 
   render() {
     const { questions } = this.state;
+    console.log(questions);
     return (
       <div className="App">
         <InfiniteScroll
@@ -73,11 +75,11 @@ class App extends React.Component<Props, State> {
               {questions.map((question: any, index: number) => {
                 return (
                   <Row
-                    creation_date={question.creation_date}
+                    creation_date={question.creation_date || ""}
                     key={index}
-                    link={question.link}
-                    owner={question.owner}
-                    title={question.title}
+                    link={question.link || ""}
+                    owner={question.owner || {}}
+                    title={question.title || ""}
                   ></Row>
                 );
               })}
