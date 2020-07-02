@@ -30,7 +30,7 @@ class App extends React.Component<Props, State> {
       key: "U4DMV*8nvpm3EOpvf69Rxw((",
       site: "stackoverflow",
       order: "desc",
-      sort: "activity",
+      sort: "hot",
       filter: "default"
     };
     const query = Object.keys(queryObject)
