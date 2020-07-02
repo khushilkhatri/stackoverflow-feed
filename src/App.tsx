@@ -1,26 +1,92 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Table } from "react-bootstrap";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Row from "./Row";
+import "./App.scss";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+type Props = {};
+
+type State = {
+  questions: any;
+  page: number;
+};
+
+class App extends React.Component<Props, State> {
+  state = {
+    questions: [],
+    page: 1
+  };
+
+  componentDidMount() {
+    this.fetchQuestions();
+  }
+
+  date: number = parseInt((new Date().getTime() / 1000).toString());
+
+  fetchQuestions: any = () => {
+    const { page } = this.state;
+    const queryObject: any = {
+      page,
+      key: "U4DMV*8nvpm3EOpvf69Rxw((",
+      site: "stackoverflow",
+      order: "desc",
+      sort: "activity",
+      filter: "default"
+    };
+    const query = Object.keys(queryObject)
+      .map(k => `${k}=${queryObject[k]}`)
+      .join("&");
+    fetch(`https://api.stackexchange.com/2.2/questions?${query}`)
+      .then(async (res: any) => {
+        const data = await res.json();
+        this.setState(state => {
+          return {
+            questions: state.questions.concat(data.items),
+            page: state.page + 1
+          };
+        });
+      })
+      .catch((err: Error) => {
+        window.alert("API fetch error");
+      });
+  };
+
+  render() {
+    const { questions } = this.state;
+    return (
+      <div className="App">
+        <InfiniteScroll
+          next={this.fetchQuestions}
+          hasMore={true}
+          loader={<h4>Loading.......</h4>}
+          dataLength={questions.length}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <Table bordered hover>
+            <thead>
+              <tr>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Creation Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {questions.map((question: any, index: number) => {
+                return (
+                  <Row
+                    creation_date={question.creation_date}
+                    key={index}
+                    link={question.link}
+                    owner={question.owner}
+                    title={question.title}
+                  ></Row>
+                );
+              })}
+            </tbody>
+          </Table>
+        </InfiniteScroll>
+      </div>
+    );
+  }
 }
 
 export default App;
