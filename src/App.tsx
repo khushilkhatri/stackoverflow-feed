@@ -48,13 +48,11 @@ class App extends React.Component<Props, State> {
       })
       .catch((err: Error) => {
         window.alert("API fetch error. Stackoverflow API response 400.");
-        console.log(this.state);
       });
   };
 
   render() {
     const { questions } = this.state;
-    console.log(questions);
     return (
       <div className="App">
         <InfiniteScroll
