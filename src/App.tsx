@@ -1,7 +1,9 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Row as BSRow, Container } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
+
 import Row from "./Row";
+import Modal from "./Modal";
 import "./App.scss";
 
 type Props = {};
@@ -9,12 +11,14 @@ type Props = {};
 type State = {
   questions: any;
   page: number;
+  index: any;
 };
 
 class App extends React.Component<Props, State> {
   state = {
     questions: [],
-    page: 1
+    page: 1,
+    index: null
   };
 
   componentDidMount() {
@@ -31,7 +35,7 @@ class App extends React.Component<Props, State> {
       site: "stackoverflow",
       order: "desc",
       sort: "hot",
-      filter: "default"
+      filter: "withbody"
     };
     const query = Object.keys(queryObject)
       .map(k => `${k}=${queryObject[k]}`)
@@ -39,6 +43,7 @@ class App extends React.Component<Props, State> {
     fetch(`https://api.stackexchange.com/2.2/questions?${query}`)
       .then(async (res: any) => {
         const data = await res.json();
+        console.log(data);
         this.setState(state => {
           return {
             questions: state.questions.concat(data.items),
@@ -51,39 +56,53 @@ class App extends React.Component<Props, State> {
       });
   };
 
+  onHide = () => {
+    this.setState({
+      index: null
+    });
+  };
+
+  onSelect = (index: number) => {
+    this.setState({
+      index
+    });
+  };
+
   render() {
-    const { questions } = this.state;
+    const { questions, index } = this.state;
     return (
       <div className="App">
         <InfiniteScroll
           next={this.fetchQuestions}
           hasMore={true}
-          loader={<h4>Loading.......</h4>}
+          loader={
+            <img
+              className="app-img"
+              src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/09b24e31234507.564a1d23c07b4.gif"
+            />
+          }
           dataLength={questions.length}
         >
-          <Table bordered hover>
-            <thead>
-              <tr>
-                <th>Author</th>
-                <th>Title</th>
-                <th>Creation Date</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Container>
+            <BSRow>
               {questions.map((question: any, index: number) =>
                 question ? (
                   <Row
                     creation_date={question.creation_date}
                     key={index}
-                    link={question.link}
                     owner={question.owner}
                     title={question.title}
+                    index={index}
+                    onSelect={this.onSelect}
                   ></Row>
                 ) : null
               )}
-            </tbody>
-          </Table>
+            </BSRow>
+          </Container>
         </InfiniteScroll>
+        {questions.length !== 0 && index !== null && (
+          <Modal {...questions[index]} onHide={this.onHide}></Modal>
+        )}
       </div>
     );
   }
